@@ -45,7 +45,7 @@ export const userSignup=async (req:Request, res:Response, next:NextFunction)=>{
             signed: true,
         });
 
-        return res.status(201).json({message: "OK", id:user._id.toString});
+        return res.status(201).json({message: "OK", name:user.name, eamil:user.email});
     }catch(error){
         console.log(error);
         return res.status(200).json({message: "ERROR", cause:error.message});
@@ -85,7 +85,28 @@ export const userLogin=async (req:Request, res:Response, next:NextFunction)=>{
             signed: true,
         });
         //AFTER CHECKING BOTH UP data
-        return res.status(201).json({message: "OK", id:user._id.toString});
+        return res.status(201).json({message: "OK", name:user.name, eamil:user.email});
+    }catch(error){
+        console.log(error);
+        return res.status(200).json({message: "ERROR", cause:error.message});
+    }
+}
+
+export const verifyUser=async (req:Request, res:Response, next:NextFunction)=>{
+    try{
+        //verify if token is malfunctioned or not(user Token Check)
+        const user=await User.findById({email:res.locals.jwtData.email});
+        if(!user){
+            return res.status(401).send("User Not registered OR Token malfunctioned");
+        }
+        console.log(user._id.toString(),res.locals.jwtData.id);
+
+        if(user._id.toString()!==res.locals.jwtData.id){
+            return res.status(401).send("Permissions didn't matched");
+        }
+
+        //AFTER CHECKING BOTH UP data
+        return res.status(201).json({message: "OK", name:user.name, eamil:user.email});
     }catch(error){
         console.log(error);
         return res.status(200).json({message: "ERROR", cause:error.message});

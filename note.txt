@@ -1,0 +1,1 @@
+axios: axios is used to send api request & used for communication with the backend & fontend
